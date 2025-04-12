@@ -68,6 +68,24 @@ float average_bootstrapping_running_time(std::string scheme) {
     return avg_time / NUMBER_OF_EXECUTIONS;
 }
 
+
+float getBskSize(bool isNTRU) {
+    float size = 0.0;
+    Param& param = isNTRU ? parNTRU : parLWE;
+    
+    for (int i = 0; i < Param::B_bsk_size; i++) {
+        // Each partition has partition[i] elements, each with l_bsk[i] FFT polynomials
+        // Each FFT polynomial has N2p1 complex doubles
+        size += param.bsk_partition[i] * param.l_bsk[i] * Param::N2p1 * sizeof(std::complex<double>);
+        
+        // For NTRU we have 2 bits per coefficient
+        if (isNTRU) size *= 2;
+    }
+    
+    return size / (1024.0 * 1024.0); // Convert to MB
+}
+
+
 void benchmark() {
     SchemeNTRU schemeNTRU;
     SchemeLWE schemeLWE;
@@ -84,14 +102,14 @@ void benchmark() {
     std::cout << "-------------------------" << std::endl;
     std::cout << "MNTRU tests" << std::endl;
     std::cout << "Key switching key size: " << (sizeof(int)*parNTRU.n*parNTRU.l_ksk)/1024.0 << " MB" << std::endl;
-    std::cout << "Bootstrapping key size: " <<  (sizeof(int)*parNTRU.n*(parNTRU.l_bsk[0] + parNTRU.l_bsk[1]))/1024.0 << " MB" << std::endl; // à corriger
+    std::cout << "Bootstrapping key size: " <<  getBskSize(true) << " MB" << std::endl; // à corriger
     std::cout << "Mutliplication on R_Q: " << ntru_ring_multiplication() << std::endl;
     std::cout << "Number of FFTs: " << ntru_fft_multiplication() << std::endl;
     std::cout << "Average bootstrapping running time over 1000 executions: " << average_bootstrapping_running_time("NTRU") << " s" << std::endl;
     std::cout << "-------------------------" << std::endl;
     std::cout << "LWE tests" << std::endl;
     std::cout << "Key switching key size: " << (sizeof(int)*parLWE.n*parLWE.l_ksk)/1024.0 << "MB" << std::endl;
-    std::cout << "Bootstrapping key size: " << (sizeof(int)*parLWE.n*(parLWE.l_bsk[0] + parLWE.l_bsk[1]))/1024.0 << "MB" << std::endl; // à corriger
+    std::cout << "Bootstrapping key size: " << getBskSize(false) << "MB" << std::endl; // à corriger
     std::cout << "Mutliplication on R_Q: " << lwe_ring_multiplication() << std::endl;
     std::cout << "Number of FFTs: " << lwe_fft_multiplication() << std::endl;
     std::cout << "Average bootstrapping running time over 1000 executions: " << average_bootstrapping_running_time("LWE") << " s" << std::endl;
