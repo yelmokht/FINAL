@@ -5,6 +5,30 @@
 
 #define NUMBER_OF_EXECUTIONS 1
 
+int ntru_fft_multiplication() {
+    int fft_number = parNTRU.bsk_partition[0] * (parNTRU.l_bsk[0] + 1) + parNTRU.bsk_partition[1] * (parNTRU.l_bsk[1] + 1);
+    std::cout << "Number of FFTs: " << fft_number << std::endl;
+    return fft_number;
+}
+
+int lwe_fft_multiplication() {
+    int fft_number = parLWE.bsk_partition[0] * (parLWE.l_bsk[0] + 1) + parLWE.bsk_partition[1] * (parLWE.l_bsk[1] + 1);
+    std::cout << "Number of FFTs: " << fft_number << std::endl;
+    return fft_number;
+}
+
+int ntru_ring_multiplication() {
+    int ring_number = 2 * (parNTRU.bsk_partition[0] * (parNTRU.l_bsk[0]) + parNTRU.bsk_partition[1] * (parNTRU.l_bsk[1])); // CMux 
+    // std::cout << "Number of ring multiplications: " << ring_number << std::endl;
+    return ring_number;
+}
+
+int lwe_ring_multiplication() {
+    int ring_number = (parLWE.bsk_partition[0] * (parLWE.l_bsk[0]) + parLWE.bsk_partition[1] * (parLWE.l_bsk[1])); // Divided for LWE
+    // std::cout << "Number of ring multiplications: " << ring_number << std::endl;
+    return ring_number;
+}
+
 float ntru_boostrapping_running_time() {
     SchemeNTRU schemeNTRU;
     Ctxt_NTRU ct_res_ntru, ct_ntru_1, ct_ntru_2;
@@ -60,16 +84,16 @@ void benchmark() {
     std::cout << "-------------------------" << std::endl;
     std::cout << "MNTRU tests" << std::endl;
     std::cout << "Key switching key size: " << (sizeof(int)*parNTRU.n*parNTRU.l_ksk)/1024.0 << " MB" << std::endl;
-    std::cout << "Bootstrapping key size: " <<  (sizeof(int)*parNTRU.n*static_cast<long unsigned int>(*parNTRU.l_bsk))/1024.0 << " MB" << std::endl;
-    std::cout << "Mutliplication on R_Q: " << "?" << std::endl;
-    std::cout << "Number of FFTs: " << "?" << std::endl;
+    std::cout << "Bootstrapping key size: " <<  (sizeof(int)*parNTRU.n*(parNTRU.l_bsk[0] + parNTRU.l_bsk[1]))/1024.0 << " MB" << std::endl; // à corriger
+    std::cout << "Mutliplication on R_Q: " << ntru_ring_multiplication() << std::endl;
+    std::cout << "Number of FFTs: " << ntru_fft_multiplication() << std::endl;
     std::cout << "Average bootstrapping running time over 1000 executions: " << average_bootstrapping_running_time("NTRU") << " s" << std::endl;
     std::cout << "-------------------------" << std::endl;
     std::cout << "LWE tests" << std::endl;
-    std::cout << "Key switching key size: " << (sizeof(int)*parNTRU.n*parNTRU.l_ksk)/1024.0 << "MB" << std::endl;
-    std::cout << "Bootstrapping key size: " << (sizeof(int)*parNTRU.n*static_cast<long unsigned int>(*parNTRU.l_bsk))/1024.0 << "MB" << std::endl;
-    std::cout << "Mutliplication on R_Q: " << "?" << std::endl;
-    std::cout << "Number of FFTs: " << "?" << std::endl;
+    std::cout << "Key switching key size: " << (sizeof(int)*parLWE.n*parLWE.l_ksk)/1024.0 << "MB" << std::endl;
+    std::cout << "Bootstrapping key size: " << (sizeof(int)*parLWE.n*(parLWE.l_bsk[0] + parLWE.l_bsk[1]))/1024.0 << "MB" << std::endl; // à corriger
+    std::cout << "Mutliplication on R_Q: " << lwe_ring_multiplication() << std::endl;
+    std::cout << "Number of FFTs: " << lwe_fft_multiplication() << std::endl;
     std::cout << "Average bootstrapping running time over 1000 executions: " << average_bootstrapping_running_time("LWE") << " s" << std::endl;
     std::cout << "-------------------------" << std::endl;
     std::cout << "Benchmarking completed !" << std::endl;
@@ -77,8 +101,6 @@ void benchmark() {
 
 int main() {
     benchmark();
-    // lwe_boostrapping_running_time();
-    // average_bootstrapping_running_time("LWE");
 
     return 0;
 }
