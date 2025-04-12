@@ -2,13 +2,16 @@ CCX = g++
 CCXFLAGS = -O3 -funroll-loops -march=native -std=c++11 -pthread -I. -I./include
 DEPS = -lntl -lgmp -lfftw3 -lm
 
-all: clean test
+all: clean test benchmark
 	 
 clean:
-	$(RM) test test.o lwehe.o ntruhe.o fft.o sampler.o keygen.o libfinal.a
+	$(RM) test test.o lwehe.o ntruhe.o fft.o sampler.o keygen.o libfinal.a benchmark.o benchmark
 
 test: FINAL.h libfinal.a
 	$(CCX) $(CCXFLAGS) -o test test.cpp libfinal.a $(DEPS)
+
+benchmark: benchmark.o libfinal.a
+	$(CCX) $(CCXFLAGS) -o benchmark benchmark.o libfinal.a $(DEPS)
 
 libfinal.a: include/params.h ntruhe.o lwehe.o keygen.o fft.o sampler.o
 	$(AR) -q libfinal.a ntruhe.o lwehe.o keygen.o fft.o sampler.o
@@ -27,3 +30,6 @@ fft.o: include/fft.h
 
 sampler.o: include/sampler.h include/params.h src/sampler.cpp
 	$(CCX) $(CCXFLAGS) -c src/sampler.cpp
+
+benchmark.o: include/benchmark.h benchmark.cpp
+	$(CCX) $(CCXFLAGS) -c benchmark.cpp
