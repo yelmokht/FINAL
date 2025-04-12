@@ -1,0 +1,3 @@
+sudo apt install libntl-dev
+sudo apt install libfftw3-dev
+sudo apt install libgmp-dev
