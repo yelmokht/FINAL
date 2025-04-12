@@ -5,34 +5,45 @@
 
 #define NUMBER_OF_EXECUTIONS 1000
 
-float function() {
+float ntru_boostrapping_running_time() {
     SchemeNTRU schemeNTRU;
     Ctxt_NTRU ct_res_ntru, ct_ntru_1, ct_ntru_2;
     
     clock_t start = clock();
     schemeNTRU.nand_gate(ct_res_ntru, ct_ntru_1, ct_ntru_2);
     schemeNTRU.bootstrap(ct_res_ntru);
-    std::cout << "Running time MNTRU: " << float(clock()-start)/CLOCKS_PER_SEC << std::endl;
+    // std::cout << "Running time MNTRU: " << float(clock()-start)/CLOCKS_PER_SEC << std::endl;
+    return float(clock()-start)/CLOCKS_PER_SEC;
+}
 
+float lwe_boostrapping_running_time() {
     SchemeLWE schemeLWE;
     Ctxt_LWE ct_res_lwe, ct_lwe_1, ct_lwe_2;
 
-    start = clock();
+    clock_t start = clock();
     schemeLWE.nand_gate(ct_res_lwe, ct_lwe_1, ct_lwe_2);
     schemeLWE.bootstrap(ct_res_lwe);
     std::cout << "Running time LWE: " << float(clock()-start)/CLOCKS_PER_SEC << std::endl;
+    return float(clock()-start)/CLOCKS_PER_SEC;
 }
 
-void average_bootstrapping_running_time() {
+float average_bootstrapping_running_time(std::string scheme) {
     float avg_time = 0.0;
-    auto start = clock();
 
     for (int i = 0; i < NUMBER_OF_EXECUTIONS; i++) {
-        function();
-        avg_time += float(clock()-start)/CLOCKS_PER_SEC;
+
+        if (scheme == "NTRU") {
+            avg_time += ntru_boostrapping_running_time();
+        } else if (scheme == "LWE") {
+            avg_time += lwe_boostrapping_running_time();
+        } else {
+            std::cerr << "Invalid scheme specified. Use 'NTRU' or 'LWE'." << std::endl;
+            return 0.0;
+        }
     }
 
-    std::cout << "Average running bootstrapping time: " << avg_time/NUMBER_OF_EXECUTIONS << " seconds" << std::endl;
+    // std::cout << "Average running bootstrapping time for " << scheme << " :" << avg_time/NUMBER_OF_EXECUTIONS << " seconds" << std::endl;
+    return avg_time / NUMBER_OF_EXECUTIONS;
 }
 
 void benchmark() {
@@ -66,15 +77,8 @@ void benchmark() {
 }
 
 int main() {
-    benchmark();
-
-    // SchemeNTRU schemeNTRU;
-    // Ctxt_NTRU ct_res_ntru, ct_ntru_1, ct_ntru_2;
-    
-    // clock_t start = clock();
-    // schemeNTRU.nand_gate(ct_res_ntru, ct_ntru_1, ct_ntru_2);
-    // schemeNTRU.bootstrap(ct_res_ntru);
-    // std::cout << "Running time MNTRU: " << float(clock()-start)/CLOCKS_PER_SEC << std::endl;
+    // benchmark();
+    ntru_boostrapping_running_time();
 
     return 0;
 }
