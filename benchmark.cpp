@@ -11,8 +11,7 @@ float ntru_boostrapping_running_time() {
     
     clock_t start = clock();
     schemeNTRU.nand_gate(ct_res_ntru, ct_ntru_1, ct_ntru_2);
-    schemeNTRU.bootstrap(ct_res_ntru);
-    // std::cout << "Running time MNTRU: " << float(clock()-start)/CLOCKS_PER_SEC << std::endl;
+    std::cout << "Running time MNTRU: " << float(clock()-start)/CLOCKS_PER_SEC << std::endl;
     return float(clock()-start)/CLOCKS_PER_SEC;
 }
 
@@ -22,7 +21,6 @@ float lwe_boostrapping_running_time() {
 
     clock_t start = clock();
     schemeLWE.nand_gate(ct_res_lwe, ct_lwe_1, ct_lwe_2);
-    schemeLWE.bootstrap(ct_res_lwe);
     std::cout << "Running time LWE: " << float(clock()-start)/CLOCKS_PER_SEC << std::endl;
     return float(clock()-start)/CLOCKS_PER_SEC;
 }
@@ -79,6 +77,7 @@ void benchmark() {
 int main() {
     // benchmark();
     ntru_boostrapping_running_time();
+    lwe_boostrapping_running_time();
 
     return 0;
 }
