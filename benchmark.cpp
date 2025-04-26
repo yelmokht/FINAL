@@ -13,6 +13,10 @@ float lwe_key_switching_key_size() {
     return (sizeof(int) * parLWE.n * parLWE.l_ksk) / (1024.0);
 }
 
+float tfhe_bootstrapping_key_size() {
+    return 4*630*1024*3*log2(pow(2, 32)) / (8 * 1000.0 * 1000.0);
+}
+
 float ntru_bootstrapping_key_size() {
     return (2 * parNTRU.n * (parNTRU.l_bsk[0] + parNTRU.l_bsk[1]) * parNTRU.N * log2(parNTRU.q_base)) / (8 * 1000.0 * 1000.0);
 }
@@ -112,7 +116,10 @@ void benchmark() {
     std::cout << "Number of FFTs: " << lwe_fft_multiplication() << std::endl;
     std::cout << "Average bootstrapping running time over 1000 executions: " << average_bootstrapping_running_time("LWE") << " s" << std::endl;
     std::cout << "-------------------------" << std::endl;
+    std::cout << " Key size pourcentage: " << ( 1 - (lwe_key_switching_key_size() + lwe_bootstrapping_key_size()) / (40 + 31)) * 100 << "%" << std::endl;
     std::cout << "Benchmarking completed !" << std::endl;
+
+    std::cout << "TFHE" << tfhe_bootstrapping_key_size() << " MB" << std::endl;
 }
 
 int main() {
