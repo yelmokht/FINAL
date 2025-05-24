@@ -1,1 +1,1 @@
-Average bootstrapping time for LWE: 0.024587 s
+Average bootstrapping time for LWE: 0.0198843 s

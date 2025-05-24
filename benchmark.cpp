@@ -8,7 +8,7 @@
 
 
 
-#define NUMBER_OF_EXECUTIONS 100
+#define NUMBER_OF_EXECUTIONS 1000
 
 float ntru_key_switching_key_size() {
     return (sizeof(int) * parNTRU.n * parNTRU.l_ksk) / (1024.0);
