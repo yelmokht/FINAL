@@ -1,0 +1,1 @@
+Average bootstrapping time for NTRU: 0.0743598 s
